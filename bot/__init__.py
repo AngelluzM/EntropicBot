@@ -1,0 +1,1 @@
+"""Discord systems bot package."""

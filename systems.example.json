@@ -1,0 +1,32 @@
+{
+  "systems": {
+    "orders": {
+      "description": "API interna de pedidos",
+      "base_url": "https://orders.example.com",
+      "headers": {
+        "Authorization": "Bearer ${ORDERS_API_TOKEN}"
+      },
+      "actions": {
+        "health": {
+          "description": "Verifica a saude do sistema de pedidos",
+          "method": "GET",
+          "path": "/health"
+        },
+        "find": {
+          "description": "Busca um pedido por ID usando payload {\"order_id\":\"123\"}",
+          "method": "GET",
+          "path": "/orders/{order_id}"
+        },
+        "restart-worker": {
+          "description": "Solicita reinicio de um worker de pedidos",
+          "method": "POST",
+          "path": "/admin/workers/restart",
+          "body": {
+            "worker": "orders"
+          },
+          "timeout_seconds": 30
+        }
+      }
+    }
+  }
+}
