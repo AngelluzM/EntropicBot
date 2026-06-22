@@ -67,6 +67,54 @@ def test_prepare_post_request_merges_configured_body_and_payload() -> None:
     assert request.json_body == {"worker": "orders", "reason": "manual"}
 
 
+def test_rpg_system_config_parses_link_and_sheet_action() -> None:
+    registry = SystemRegistry.from_dict(
+        {
+            "systems": {
+                "aephirum": {
+                    "display_name": "Aephirum",
+                    "description": "Sistema principal",
+                    "link": "https://aephirum.example.com",
+                    "base_url": "https://api.aephirum.example.com",
+                    "sheet": {
+                        "action": "character-sheet",
+                        "id_payload_key": "character_id",
+                    },
+                    "actions": {
+                        "character-sheet": {
+                            "method": "GET",
+                            "path": "/characters/{character_id}",
+                        }
+                    },
+                }
+            }
+        }
+    )
+
+    system = registry.get_system("aephirum")
+
+    assert system.display_name == "Aephirum"
+    assert system.link == "https://aephirum.example.com"
+    assert system.sheet is not None
+    assert system.sheet.action == "character-sheet"
+    assert system.sheet.id_payload_key == "character_id"
+
+
+def test_sheet_action_must_exist() -> None:
+    with pytest.raises(ConfigError, match="does not exist"):
+        SystemRegistry.from_dict(
+            {
+                "systems": {
+                    "aephirum": {
+                        "base_url": "https://api.aephirum.example.com",
+                        "sheet": {"action": "missing"},
+                        "actions": {},
+                    }
+                }
+            }
+        )
+
+
 def test_missing_path_payload_raises_config_error() -> None:
     registry = SystemRegistry.from_dict(
         {

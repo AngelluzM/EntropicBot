@@ -1,30 +1,43 @@
 {
   "systems": {
-    "orders": {
-      "description": "API interna de pedidos",
-      "base_url": "https://orders.example.com",
+    "aephirum": {
+      "display_name": "Aephirum",
+      "description": "Sistema principal de fichas do servidor",
+      "link": "https://aephirum.example.com",
+      "base_url": "https://api.aephirum.example.com",
       "headers": {
-        "Authorization": "Bearer ${ORDERS_API_TOKEN}"
+        "Authorization": "Bearer ${AEPHIRUM_API_TOKEN}"
+      },
+      "sheet": {
+        "action": "character-sheet",
+        "id_payload_key": "character_id"
       },
       "actions": {
-        "health": {
-          "description": "Verifica a saude do sistema de pedidos",
+        "character-sheet": {
+          "description": "Busca uma ficha pelo ID usado no Aephirum",
           "method": "GET",
-          "path": "/health"
-        },
-        "find": {
-          "description": "Busca um pedido por ID usando payload {\"order_id\":\"123\"}",
+          "path": "/characters/{character_id}"
+        }
+      }
+    },
+    "segundo-sistema": {
+      "display_name": "Segundo Sistema",
+      "description": "Troque pelo nome do outro sistema do servidor",
+      "link": "https://second-rpg-system.example.com",
+      "base_url": "https://api.second-rpg-system.example.com",
+      "headers": {
+        "Authorization": "Bearer ${SECOND_RPG_API_TOKEN}"
+      },
+      "sheet": {
+        "action": "character-sheet",
+        "id_payload_key": "sheet_id"
+      },
+      "actions": {
+        "character-sheet": {
+          "description": "Busca uma ficha pelo ID usado no segundo sistema",
           "method": "GET",
-          "path": "/orders/{order_id}"
-        },
-        "restart-worker": {
-          "description": "Solicita reinicio de um worker de pedidos",
-          "method": "POST",
-          "path": "/admin/workers/restart",
-          "body": {
-            "worker": "orders"
-          },
-          "timeout_seconds": 30
+          "path": "/sheets/{sheet_id}",
+          "timeout_seconds": 20
         }
       }
     }

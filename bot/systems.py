@@ -30,10 +30,19 @@ class SystemAction:
 
 
 @dataclass(frozen=True)
+class CharacterSheetConfig:
+    action: str
+    id_payload_key: str = "character_id"
+
+
+@dataclass(frozen=True)
 class ExternalSystem:
     name: str
     base_url: str
+    display_name: str
     description: str = ""
+    link: str | None = None
+    sheet: CharacterSheetConfig | None = None
     headers: dict[str, str] = field(default_factory=dict)
     actions: dict[str, SystemAction] = field(default_factory=dict)
 
@@ -191,7 +200,10 @@ def _parse_system(name: str, raw: Any) -> ExternalSystem:
     return ExternalSystem(
         name=name,
         base_url=_expand_env(base_url),
+        display_name=str(raw.get("display_name", name)),
         description=str(raw.get("description", "")),
+        link=_optional_expanded_string(raw.get("link"), f"system '{name}' link"),
+        sheet=_parse_sheet_config(raw.get("sheet"), raw_actions, name),
         headers=_parse_headers(raw.get("headers", {}), f"system '{name}'"),
         actions=actions,
     )
@@ -229,6 +241,37 @@ def _parse_headers(raw: Any, context: str) -> dict[str, str]:
         raise ConfigError(f"Headers for {context} must be an object")
 
     return {str(key): str(_expand_env(value)) for key, value in raw.items()}
+
+
+def _parse_sheet_config(raw: Any, raw_actions: dict[str, Any], system_name: str) -> CharacterSheetConfig | None:
+    if raw is None:
+        return None
+
+    if not isinstance(raw, dict):
+        raise ConfigError(f"Sheet config for system '{system_name}' must be an object")
+
+    action = raw.get("action")
+    if not isinstance(action, str) or not action:
+        raise ConfigError(f"Sheet config for system '{system_name}' requires action")
+
+    if action not in raw_actions:
+        raise ConfigError(f"Sheet action '{action}' does not exist in system '{system_name}'")
+
+    id_payload_key = raw.get("id_payload_key", "character_id")
+    if not isinstance(id_payload_key, str) or not id_payload_key:
+        raise ConfigError(f"Sheet id_payload_key for system '{system_name}' must be a string")
+
+    return CharacterSheetConfig(action=action, id_payload_key=id_payload_key)
+
+
+def _optional_expanded_string(raw: Any, context: str) -> str | None:
+    if raw is None:
+        return None
+
+    if not isinstance(raw, str):
+        raise ConfigError(f"{context} must be a string")
+
+    return _expand_env(raw)
 
 
 def _expand_env(value: Any) -> Any:
