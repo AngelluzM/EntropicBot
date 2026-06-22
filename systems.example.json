@@ -1,0 +1,45 @@
+{
+  "systems": {
+    "aephirum": {
+      "display_name": "Aephirum",
+      "description": "Sistema principal de fichas do servidor",
+      "link": "https://aephirum.example.com",
+      "base_url": "https://api.aephirum.example.com",
+      "headers": {
+        "Authorization": "Bearer ${AEPHIRUM_API_TOKEN}"
+      },
+      "sheet": {
+        "action": "character-sheet",
+        "id_payload_key": "character_id"
+      },
+      "actions": {
+        "character-sheet": {
+          "description": "Busca uma ficha pelo ID usado no Aephirum",
+          "method": "GET",
+          "path": "/characters/{character_id}"
+        }
+      }
+    },
+    "segundo-sistema": {
+      "display_name": "Segundo Sistema",
+      "description": "Troque pelo nome do outro sistema do servidor",
+      "link": "https://second-rpg-system.example.com",
+      "base_url": "https://api.second-rpg-system.example.com",
+      "headers": {
+        "Authorization": "Bearer ${SECOND_RPG_API_TOKEN}"
+      },
+      "sheet": {
+        "action": "character-sheet",
+        "id_payload_key": "sheet_id"
+      },
+      "actions": {
+        "character-sheet": {
+          "description": "Busca uma ficha pelo ID usado no segundo sistema",
+          "method": "GET",
+          "path": "/sheets/{sheet_id}",
+          "timeout_seconds": 20
+        }
+      }
+    }
+  }
+}
