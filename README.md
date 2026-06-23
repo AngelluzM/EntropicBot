@@ -1,16 +1,26 @@
 # RPG Discord Bot
 
-Bot em Python para ajudar jogadores de um servidor de RPG a acessar os sistemas
-da mesa e acompanhar fichas de personagem pelo Discord.
+Bot em Python para **gestao de jogadores** e **jogo** no Discord do seu
+servidor de RPG. Ele ajuda a cadastrar jogadores, acessar sistemas como
+Aephirum, acompanhar fichas de personagem e usar comandos basicos de mesa.
 
 ## O que ele faz
 
-- `/ping` verifica se o bot esta online.
+### Gestao de jogadores
+- `/registrar` cadastra o jogador no bot.
+- `/perfil` mostra cadastro e quantidade de fichas vinculadas.
+- `/jogadores` mostra quantos jogadores estao cadastrados (staff).
+
+### Sistemas e fichas
 - `/sistemas` lista os sistemas de RPG configurados e seus links.
 - `/link sistema` mostra o link de acesso de um sistema, como Aephirum.
 - `/ficha-vincular sistema personagem_id apelido` vincula uma ficha ao usuario.
 - `/fichas` mostra as fichas vinculadas ao usuario e o ultimo cache salvo.
 - `/ficha-sincronizar` atualiza manualmente as fichas do usuario.
+
+### Jogo
+- `/rolar dados motivo` rola dados no formato XdY, por exemplo `1d20`.
+- `/ajuda` lista os comandos disponiveis.
 
 As fichas sao sincronizadas automaticamente 1x ao dia. Comandos de ficha usam
 respostas efemeras por padrao para evitar expor informacoes do personagem no
@@ -44,6 +54,8 @@ Edite `.env` e preencha:
   imediatamente em desenvolvimento.
 - `SYSTEMS_CONFIG_PATH`: caminho do arquivo de sistemas, por padrao `systems.json`.
 - `SHEETS_STORE_PATH`: arquivo local onde o bot guarda vinculos/cache de fichas.
+- `PLAYERS_STORE_PATH`: arquivo local onde o bot guarda cadastro de jogadores.
+- `DISCORD_STAFF_ROLE_IDS`: IDs de cargos de staff separados por virgula.
 - `SHEET_SYNC_INTERVAL_HOURS`: intervalo de sync; mantenha `24` em producao.
 - tokens dos seus sistemas, como `AEPHIRUM_API_TOKEN`.
 
@@ -104,9 +116,11 @@ com `${NOME_DA_VARIAVEL}`.
 No Discord:
 
 ```text
+/registrar sistema:aephirum
 /link sistema:aephirum
 /ficha-vincular sistema:aephirum personagem_id:abc123 apelido:Arvand
 /fichas
+/rolar dados:1d20 motivo:Ataque
 ```
 
 ## Como a sincronizacao diaria funciona

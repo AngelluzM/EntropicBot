@@ -12,9 +12,11 @@ class Settings:
     discord_token: str
     systems_config_path: Path
     sheets_store_path: Path
+    players_store_path: Path
     discord_guild_id: int | None = None
     command_prefix: str = "!"
     sheet_sync_interval_hours: float = 24
+    staff_role_ids: frozenset[int] = frozenset()
 
 
 def load_settings() -> Settings:
@@ -32,6 +34,15 @@ def load_settings() -> Settings:
         discord_guild_id=guild_id,
         systems_config_path=Path(os.getenv("SYSTEMS_CONFIG_PATH", "systems.json")),
         sheets_store_path=Path(os.getenv("SHEETS_STORE_PATH", "data/character_sheets.json")),
+        players_store_path=Path(os.getenv("PLAYERS_STORE_PATH", "data/players.json")),
         command_prefix=os.getenv("DISCORD_COMMAND_PREFIX", "!"),
         sheet_sync_interval_hours=float(os.getenv("SHEET_SYNC_INTERVAL_HOURS", "24")),
+        staff_role_ids=_parse_role_ids(os.getenv("DISCORD_STAFF_ROLE_IDS", "")),
     )
+
+
+def _parse_role_ids(raw: str) -> frozenset[int]:
+    if not raw.strip():
+        return frozenset()
+
+    return frozenset(int(value.strip()) for value in raw.split(",") if value.strip())
